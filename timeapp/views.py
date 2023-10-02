@@ -6,11 +6,10 @@ from django.http import JsonResponse
 from timeback.settings import *
 from rest_framework.decorators import api_view
 from django.db import Error
-import datetime
+from datetime import datetime
 import hashlib
 
 #some shits 
-
 def hashPassword(pass_word):
     password = pass_word
     hashObject = hashlib.sha256(password.encode())
@@ -18,11 +17,7 @@ def hashPassword(pass_word):
     return hashedPassword
 
 
-
-
-
 #services
-
 @ api_view(['POST', "GET", "PUT", "PATCH", "DELETE"])
 def getClient(request):
     action = 'getClient'
@@ -33,8 +28,8 @@ def getClient(request):
     cursor = con.cursor()
     cursor.execute(f"SELECT * FROM timeorder.tbl_client WHERE timeorder.tbl_client.client_id = {client_id};")
     columns = cursor.description
-    respRow = [{columns[index][0]:column for index,
-                column in enumerate(value)} for value in cursor.fetchall()]
+    respRow = [{columns[index][0]: column.isoformat() if isinstance(column, datetime) else column for index,
+                column in enumerate(value)} for value in cursor.fetchall()] 
     resp = sendResponse(200, "Амжилттай", respRow, action)
     return HttpResponse(resp)
 
@@ -55,25 +50,36 @@ def getUser(request):
 
 
 @ api_view(['POST', "GET", "PUT", "PATCH", "DELETE"])
-def createClient(data,request):
+def createClient(request):
+    action = 'createClient'
     try:
+        data = json.loads(request.body)
         con = connect()
         cur = con.cursor()
-        hashPassword()
+        hashed_password = hashPassword(data['password'])
         created_at = datetime.now()
         cur.execute(
-            """INSERT INTO your_table_name 
+            """INSERT INTO timeorder.tbl_client 
                (first_name, last_name, username, password, email, phone_number, picture, created_at) 
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) 
                RETURNING client_id""",
-            (data['first_name'], data['last_name'], data['username'], hashPassword, data['email'], data['phone_number'], data['picture'], created_at)
+            (data['first_name'], data['last_name'], data['username'], hashed_password, data['email'], data['phone_number'], data['picture'], created_at)
         )
         client_id = cur.fetchone()[0]
-        resp = sendResponse(200, "Хэрэглэгч амжилттай бүртгэгдлээ.", "client_id": client_id, action)
-        return HttpResponse(resp)
         con.commit()
+        
+        response_data = {
+            "message": "Хэрэглэгч амжилттай бүртгэгдлээ.",
+            "client_id": client_id
+        }
+        return JsonResponse(response_data, status=201)
+    
     except Exception as error:
-        return {"error": str(error)}, 500
+        response_data = {
+            "error": str(error)
+        }
+        return JsonResponse(response_data, status=500)
+    
     finally:
         if con is not None:
             con.close()
