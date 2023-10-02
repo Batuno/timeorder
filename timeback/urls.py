@@ -20,4 +20,5 @@ from timeapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('getclient', views.getClient),
+    path('getuser', views.getUser),
 ]
