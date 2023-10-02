@@ -58,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    
+    
 ]
 
 ROOT_URLCONF = 'timeback.urls'
@@ -85,10 +87,6 @@ WSGI_APPLICATION = 'timeback.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'qrBlogDb',
@@ -96,6 +94,9 @@ DATABASES = {
     'PASSWORD': 'timeorder',
     'HOST': '59.153.86.254',
     'PORT': '5938',
+    'OPTIONS': {
+            'options': '-c search_path=timeorder',  # Set the schema here
+        },
 }
 }
 
@@ -139,6 +140,7 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -157,10 +159,11 @@ def sendResponse(resultCode, resultMessage, data, action):
 
 def connect():
     con = psycopg2.connect(
-        dbname='db_arrdep',
-        user='uarrdep',
-        password='lab206',
-        host='202.131.254.138',
+        dbname='qrBlogDb',
+        user='qrblog',
+        password='timeorder',
+        host='59.153.86.254',
         port='5938',
     )
     return con
+
