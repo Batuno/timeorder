@@ -24,4 +24,5 @@ urlpatterns = [
     path('createclient', views.createClient),
     path('loginclient', views.loginClient),
     path('createuser', views.createUser),
+    path('loginuser', views.loginUser),
 ]

@@ -130,7 +130,6 @@ def loginClient(request):
         username = jsond.get('username', 'nokey')
         email = jsond.get('email', 'noemail')
         password = jsond.get('password', '')
-        data = json.loads(request.body)
         con = connect()
         cur = con.cursor()
         hashed_password = hashPassword(password)
@@ -194,6 +193,48 @@ def createUser(request):
             "error": str(error),
             "message": "Хэрэглэгч бүртгэхэд алдаа гарлаа."
 
+        }
+        return JsonResponse(response_data, status=500)
+    finally:
+        if con is not None:
+            con.close()
+
+
+def loginUser(request):
+    try:
+        jsond = json.loads(request.body)
+        username = jsond.get('username', 'nokey')
+        email = jsond.get('email', 'noemail')
+        password = jsond.get('password', '')
+        con = connect()
+        cur = con.cursor()
+        hashed_password = hashPassword(password)
+        cur.execute(f"""
+                    SELECT user_id, username, email, password FROM timeorder.tbl_user u WHERE username = %s OR email = %s""",
+                    [username, email]
+                    )
+        user_data = cur.fetchone()
+
+        if user_data and hashed_password == user_data[3]:
+            response_data = {
+                "user_id":user_data[0],
+                "username":user_data[1],
+                "email":user_data[2],
+                "message": "Амжилттай нэвтэрлээ."
+            }
+            return JsonResponse(response_data, status=200)
+        else:
+            response_data = {
+                "message": "Хэрэглэгчийн нэр эсвэл нууц үг буруу байна"
+            }
+            return JsonResponse(response_data, status=401)
+
+
+    except Exception as error:
+        error_message = str(error)
+        response_data = {
+            "error": error_message,
+            "message": "Амжилтгүй оролдлого."
         }
         return JsonResponse(response_data, status=500)
     finally:
