@@ -18,34 +18,73 @@ def hashPassword(pass_word):
 
 
 #services
-
 def getClient(request):
-    action = 'getClient'
-    jsond = json.loads(request.body)
-    client_id = jsond.get('client_id', 'nokey')
-    con = connect()
-    cursor = con.cursor()
-    cursor.execute(f"SELECT * FROM timeorder.tbl_client WHERE timeorder.tbl_client.client_id = {client_id};")
-    columns = cursor.description
-    respRow = [{columns[index][0]: column.isoformat() if isinstance(column, datetime) else column for index,
-                column in enumerate(value)} for value in cursor.fetchall()] 
-    resp = sendResponse(200, "Амжилттай", respRow, action)
-    return HttpResponse(resp)
+    try:
+        action = 'getClient'
+        jsond = json.loads(request.body)
+        client_id = jsond.get('client_id', 'nokey')
+        con = connect()
+        cursor = con.cursor()
+        cursor.execute(f"SELECT * FROM timeorder.tbl_client WHERE timeorder.tbl_client.client_id = {client_id};")
+        columns = cursor.description
+        respRow = [{columns[index][0]: column.isoformat() if isinstance(column, datetime) else column for index,
+                    column in enumerate(value)} for value in cursor.fetchall()] 
+        if not respRow:
+            response_data = {
+                "message": "Хэрэглэгчийн id тай тохирсон хэрэглэгч олдсонгүй."
+            }
+            return JsonResponse(response_data, status=404)
+        response_data = {
+            "message": "Амжилттай",
+            "respRow": respRow,
+            "action": action
+        }
+        return JsonResponse(response_data, status=200)
+    except Exception as error:
+        response_data = {
+            "error": str(error),
+            "message": "Бүртгэлтэй хэрэглэгч олдсонгүй."
+        }
+        return JsonResponse(response_data, status=500)
+    
+    finally:
+        if con is not None:
+            con.close()
+
 
 
 def getUser(request):
-    action = 'getUser'
-    jsond = json.loads(request.body)
-    user_id = jsond.get('user_id', 'nokey')
-    con = connect()
-    cursor = con.cursor()
-    cursor.execute(f"SELECT username, company_name, email, phone_number, picture FROM timeorder.tbl_user WHERE timeorder.tbl_user.user_id = %s ", [user_id])
-    columns = cursor.description
-    respRow = [{columns[index][0]:column for index,
-                column in enumerate(value)} for value in cursor.fetchall()]
-    resp = sendResponse(200, "Амжилттай", respRow, action)
-    return HttpResponse(resp)
-
+    try:
+        action = 'getUser'
+        jsond = json.loads(request.body)
+        user_id = jsond.get('user_id', 'nokey')
+        con = connect()
+        cursor = con.cursor()
+        cursor.execute(f"SELECT username, company_name, email, phone_number, picture FROM timeorder.tbl_user WHERE timeorder.tbl_user.user_id = %s ", [user_id])
+        columns = cursor.description
+        respRow = [{columns[index][0]:column for index,
+                    column in enumerate(value)} for value in cursor.fetchall()]
+        if not respRow:
+            response_data = {
+                "message": "Хэрэглэгчийн id тай тохирсон хэрэглэгч олдсонгүй."
+            }
+            return JsonResponse(response_data, status=404)
+        response_data = {
+            "message": "Амжилттай",
+            "respRow": respRow,
+            "action": action
+        }
+        return JsonResponse(response_data, status=200)
+    except Exception as error:
+        response_data = {
+            "error": str(error),
+            "message": "Бүртгэлтэй хэрэглэгч олдсонгүй."
+        }
+        return JsonResponse(response_data, status=500)
+    
+    finally:
+        if con is not None:
+            con.close()
 
 
 def createClient(request):
