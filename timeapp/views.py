@@ -9,7 +9,7 @@ from django.db import Error
 from datetime import datetime
 import hashlib
 
-#some shits 
+#hashpassword 
 def hashPassword(pass_word):
     password = pass_word
     hashObject = hashlib.sha256(password.encode())
@@ -114,7 +114,7 @@ def createClient(request):
     except Exception as error:
         response_data = {
             "error": str(error),
-            "message": "Хэрэглэгч бүртгэхэд алдаа гарлаа. Та хэрэглэгчийн нэрээ солино уу!"
+            "message": "Хэрэглэгч бүртгэхэд алдаа гарлаа."
 
         }
         return JsonResponse(response_data, status=500)
@@ -160,6 +160,40 @@ def loginClient(request):
         response_data = {
             "error": error_message,
             "message": "Амжилтгүй оролдлого."
+        }
+        return JsonResponse(response_data, status=500)
+    finally:
+        if con is not None:
+            con.close()
+
+def createUser(request):
+    try:
+        data = json.loads(request.body)
+        con = connect()
+        cur = con.cursor()
+        hashed_password = hashPassword(data['password'])
+        created_at = datetime.now()
+        cur.execute(
+            """INSERT INTO timeorder.tbl_user as u
+            (username, password, company_name, email, phone_number, picture, client_id, status_id, created_at)
+            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING *""",
+            (data['username'], hashed_password, data['company_name'], data['email'], data['phone_number'], data['picture'], data['client_id'],data['status_id'], created_at)
+        )
+        user_id = cur.fetchone()
+        con.commit()
+        response_data = {
+            "message": "Хэрэглэгч амжилттай бүртгэгдлээ.",
+            "user_id": user_id
+        }
+        return JsonResponse(response_data, status=201)
+
+
+    except Exception as error:
+        response_data = {
+            "error": str(error),
+            "message": "Хэрэглэгч бүртгэхэд алдаа гарлаа."
+
         }
         return JsonResponse(response_data, status=500)
     finally:
