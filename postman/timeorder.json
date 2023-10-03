@@ -1,0 +1,104 @@
+{
+  "collection": {
+    "info": {
+      "_postman_id": "4a0dd003-e454-4ef6-b63e-f6ba27400c35",
+      "name": "timeorder",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "updatedAt": "2023-10-03T08:35:12.000Z",
+      "uid": "27695541-4a0dd003-e454-4ef6-b63e-f6ba27400c35"
+    },
+    "item": [
+      {
+        "name": "getclient",
+        "id": "3b44c330-eafc-42a4-847a-044d7c23f605",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": {
+              "action": "getClient",
+              "client_id": 1
+            }
+          },
+          "url": {
+            "raw": "127.0.0.1:8000/getclient",
+            "host": [
+              "127",
+              "0",
+              "0",
+              "1"
+            ],
+            "port": "8000",
+            "path": [
+              "getclient"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "27695541-3b44c330-eafc-42a4-847a-044d7c23f605"
+      },
+      {
+        "name": "createclient",
+        "id": "4fed1bd6-65b4-4d12-8c57-d2797e35028f",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": []
+        },
+        "response": [],
+        "uid": "27695541-4fed1bd6-65b4-4d12-8c57-d2797e35028f"
+      },
+      {
+        "name": "loginclient",
+        "id": "c66062bc-5d3c-4443-b287-e1d4cb9db1cd",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": []
+        },
+        "response": [],
+        "uid": "27695541-c66062bc-5d3c-4443-b287-e1d4cb9db1cd"
+      },
+      {
+        "name": "getuser",
+        "id": "7306905d-8613-4b9c-aee3-b0c91ded3a5e",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": []
+        },
+        "response": [],
+        "uid": "27695541-7306905d-8613-4b9c-aee3-b0c91ded3a5e"
+      },
+      {
+        "name": "createuser",
+        "id": "bb9a6407-22d5-460d-9a13-df55ce2e4810",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": []
+        },
+        "response": [],
+        "uid": "27695541-bb9a6407-22d5-460d-9a13-df55ce2e4810"
+      }
+    ]
+  }
+}
